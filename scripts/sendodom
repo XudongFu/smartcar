@@ -1,0 +1,44 @@
+import rospy
+from std_msgs.msg import Float64
+import threading
+from gazebo_msgs.srv import *
+import geometry_msgs.msg
+import tf2_ros.transform_broadcaster
+import math  
+import tf
+
+
+def pubOdom():
+    rospy.wait_for_service("/gazebo/get_model_state")
+    client = rospy.ServiceProxy("/gazebo/get_model_state",GetModelState)
+    rate = rospy.Rate(10)
+    roll=0 
+    pitch=0
+    yaw=0.1
+    while  not rospy.is_shutdown():
+        req = GetModelStateRequest()
+        req.model_name="robot"
+        req.relative_entity_name="ground_plane"
+        rps=GetModelStateResponse()
+        #rps= client.call(req)
+        pose = rps.pose
+        m=tf.TransformBroadcaster()
+        # t = geometry_msgs.msg.TransformStamped()
+        # t.header.frame_id = 'odom'
+        # t.header.stamp = rospy.Time.now()
+        # t.child_frame_id = 'base_footprint'
+        # t.transform.translation.x = rps.pose.position.x
+        # t.transform.translation.y = rps.pose.position.y
+        # t.transform.translation.z = rps.pose.position.z
+        # m.sendTransformMessage((),)
+        m.sendTransform((rps.pose.position.x,rps.pose.position.y,rps.pose.position.z),  
+                     tf.transformations.quaternion_from_euler(roll,pitch,yaw),  
+                     rospy.Time.now(),  
+                     "odom",  
+                     "base_footprint")
+        rate.sleep()
+        pass
+    
+if __name__ == "__main__":
+    pubOdom()      
+    pass

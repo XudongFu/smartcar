@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot name="cartest" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+  <link name="map">
+    <visual>
+    <origin xyz="0.5 1 1.6" rpy="0 0 0" />
+      <geometry>
+        <box  size="1  2  0.2" /> 
+      </geometry>
+    </visual>`
+    <collision name="front_omniwheel">
+      <origin xyz="0.5 1 1" rpy="0 0 0" />
+      <geometry>
+        <box  size="1  2  0.2" /> 
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10.0"/>>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>>
+    </inertial>
+  </link>
+
+<xacro:macro name="wheel" params="linkName xyz rpy">
+
+<joint name="base_to_${linkName}" type="continuous">
+   <origin xyz="${xyz}" rpy="${rpy}" />
+   <axis xyz="0 1 0" />
+    <parent link="map"/>
+    <child link="up_${linkName}"/>
+  </joint>
+
+
+    <link name="up_${linkName}">    
+      <visual>
+       <origin xyz="0 0 -0.45" rpy="0 0.4 0" />
+        <geometry>
+          <cylinder length="1" radius="0.05"/>
+        </geometry>
+        <material name = "white">
+          <color rgba = "0 0 1 1"/>
+      </material>
+    </visual>
+    <collision name="collision_${linkName}">
+   <origin xyz="0 0 -0.45" rpy="0 0.4 0" />
+        <geometry>
+          <cylinder length="1" radius="0.05"/>
+        </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>>
+    </inertial>
+  </link>
+
+
+  <joint name="joint_${linkName}" type="continuous">
+   <origin xyz="0 0 -0.9" rpy="0 0 0" />
+   <axis xyz="0 1 0" />
+    <parent link="up_${linkName}"/>
+    <child link="down_${linkName}"/>
+  </joint>
+
+
+
+<link name="down_${linkName}">    
+      <visual>
+       <origin xyz="0 0 -0.45" rpy="0 2.74 0" />
+        <geometry>
+          <cylinder length="1" radius="0.05"/>
+        </geometry>
+        <material name = "white">
+          <color rgba = "0 0 1 1"/>
+      </material>
+    </visual>
+    <collision name="collision_${linkName}">
+    <origin xyz="0 0 -0.45" rpy="0 2.74 0" />
+        <geometry>
+          <cylinder length="1" radius="0.05"/>
+        </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>>
+    </inertial>
+  </link>
+
+
+
+</xacro:macro>
+
+<xacro:wheel linkName="leftup" xyz="0 2 1.5" rpy ="0 0 1.57"/>
+<xacro:wheel linkName="leftdown" xyz="0 0 1.5" rpy ="0 0 1.57"/>
+<xacro:wheel linkName="rightup" xyz="1 2 1.5" rpy ="0 0 1.57"/>
+<xacro:wheel linkName="rightdown" xyz="1 0 1.5" rpy ="0 0 1.57"/> 
+<gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+</gazebo>
+</robot>
