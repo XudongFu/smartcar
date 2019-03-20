@@ -1,0 +1,5 @@
+<launch>
+ <node pkg="smartcar" type="paramtest"  name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node> 
+</launch>
