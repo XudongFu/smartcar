@@ -148,7 +148,7 @@
       <joint name="base_to_${linkName}">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       </joint>
-      <actuator name="motor_${linkName}">
+      <actuator name="motor_base_to__${linkName}">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
