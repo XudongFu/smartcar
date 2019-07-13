@@ -2,35 +2,35 @@
     type: joint_state_controller/JointStateController
     publish_rate: 50
   joint1_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: base_to_leftup
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint2_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: base_to_leftdown
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint3_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: base_to_rightup
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint4_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: base_to_rightdown
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint5_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: joint_leftup
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint6_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: joint_leftdown
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint7_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: joint_rightup
     pid: {p: 100.0, i: 0.01, d: 10.0}
   joint8_position_controller:
-    type: velocity_controllers/JointVelocityController
+    type: effort_controllers/JointPositionController
     joint: joint_rightdown
     pid: {p: 100.0, i: 0.01, d: 10.0}
 

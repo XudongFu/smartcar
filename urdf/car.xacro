@@ -20,9 +20,7 @@
     <inertial>
       <origin xyz="0.5 1 1.1" rpy="0 0 0" />
       <mass value="1.0"/>
->
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
->
     </inertial>
   </link>
   <gazebo reference="base_footprint">
