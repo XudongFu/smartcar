@@ -4,7 +4,7 @@
     xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
     xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
     xmlns:xacro="http://ros.org/wiki/xacro">
-    <link name="map">
+    <link name="body">
         <visual>
             <origin xyz="0.5 1 1.6" rpy="0 0 0" />
             <geometry>
@@ -26,7 +26,7 @@
         <joint name="base_to_${linkName}" type="continuous">
             <origin xyz="${xyz}" rpy="${rpy}" />
             <axis xyz="0 1 0" />
-            <parent link="map"/>
+            <parent link="body"/>
             <child link="up_${linkName}"/>
             <limit effort="3000.0" lower="0.0" upper="1500.548" velocity="0.1"/>
             <dynamics damping="0.2"/>
