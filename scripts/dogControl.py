@@ -38,6 +38,8 @@ class footState:
     def sendDirectionCommand(self, direction):
         if(direction <= math.pi/2 - self.maxAngle):
             raise Exception("over max angle")
+        if( direction>math.pi*3/2 ):
+            direction=direction-math.pi*3/2 
         directionLength = self.height/math.sin(direction)
         upFootAngle = math.pi - direction - \
             math.acos(directionLength/(2*self.singleFootLength))
@@ -140,18 +142,45 @@ class fourFootControl:
             distance = angle-self.lastlocation[foot]
         else:
             distance = angle+math.pi*2-self.lastlocation[foot]
-        while(count <= aviableCount):            
+        while(count <= aviableCount):
             percent = count/aviableCount
-            heightpercent = 1 -(-1.2*(percent-0.5)*(percent-0.5)+0.3)
+            heightpercent = 1 - (-1.2*(percent-0.5)*(percent-0.5)+0.3)
             if(self.lastlocation[foot] < math.pi/2):
-                ambitionAngle = (math.pi/2) - (self.lastlocation[foot]+distance*percent)
+                ambitionAngle = (math.pi/2) - \
+                    (self.lastlocation[foot]+distance*percent)
             else:
-                ambitionAngle=math.pi-distance*percent-(self.lastlocation[foot]-math.pi*3/2)
-            ambitionHeight=self.height/math.sin(ambitionAngle)*heightpercent
-            self.sendStepCommand(foot, ambitionAngle,ambitionHeight)
+                ambitionAngle = math.pi-distance*percent - \
+                    (self.lastlocation[foot]-math.pi*3/2)
+            ambitionHeight = self.height/math.sin(ambitionAngle)*heightpercent
+            self.sendStepCommand(foot, ambitionAngle, ambitionHeight)
+            self.footlocation[foot] = math.pi/2- ambitionAngle
+            for otherfoot in self.foots:
+                if(foot != otherfoot):
+                    cAngle = self.getCalculableAngle(
+                        self.lastlocation[otherfoot])
+                    cAngle = cAngle-distance*percent/3.0
+                    readlAngle = self.getRealAngle(cAngle)
+                    self.sendCommand(otherfoot, math.pi-cAngle)
+                    self.footlocation[otherfoot] = readlAngle
             count = count+1
+            self.debugInfo={}
+            for foottemp in self.foots:
+                self.debugInfo[foottemp]=self.footlocation[foottemp]/(math.pi/180)
             rate.sleep()
         pass
+
+    def getCalculableAngle(self, Angle):
+        if(Angle < math.pi):
+            Angle = Angle+math.pi/2
+        else:
+            Angle = Angle-math.pi*3/2
+        return Angle
+
+    def getRealAngle(self, angle):
+        if(angle > math.pi/2):
+            return angle-math.pi/2
+        else:
+            return angle+math.pi*3/2
 
     def sendCommand(self, foot, direction):
         self.footdic[foot].sendDirectionCommand(direction)
@@ -164,15 +193,21 @@ class fourFootControl:
     def getTopic(self, num):
         return "joint"+str(num)+"_position_controller/command"
 
-
+'''
 if __name__ == "__main__":
     control = fourFootControl()
     chang = True
     while(True):
-        if(chang):
-            control.stand()
-        else:
-            control.stepForward("downleft", (math.pi/180)*20, 1500, 750)
+        control.stand()
         time.sleep(4)
-        chang = not chang
+    pass
+
+'''
+if __name__ == "__main__":
+    control = fourFootControl()
+    chang = True
+    control.stand()
+    while(True):
+        for foot in ["upleft","downleft", "upright", "downright"]:
+            control.stepForward(foot, (math.pi/180)*25, 750, 750)
     pass

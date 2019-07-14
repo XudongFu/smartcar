@@ -4,13 +4,18 @@
     xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
     xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
     xmlns:xacro="http://ros.org/wiki/xacro">
+    <!--<link name="world"/>
+    <joint name="test" type="fixed">
+        <parent link="world"/>
+        <child link="body"/>
+    </joint>-->
     <link name="body">
         <visual>
             <origin xyz="0.5 1 1.6" rpy="0 0 0" />
             <geometry>
                 <box size="1.2  2  0.2" />
             </geometry>
-        </visual>    
+        </visual>
         <collision name="front_omnileg">
             <origin xyz="0.5 1 1.6" rpy="0 0 0" />
             <geometry>
@@ -28,7 +33,7 @@
             <axis xyz="0 1 0" />
             <parent link="body"/>
             <child link="up_${linkName}"/>
-            <limit effort="3000.0" lower="0.0" upper="1500.548" velocity="0.1"/>
+            <limit effort="3000.0" lower="0.0" upper="3000.548" velocity="0.2"/>
             <dynamics damping="0.2"/>
         </joint>
         <link name="up_${linkName}">
@@ -57,7 +62,7 @@
             <axis xyz="0 1 0" />
             <parent link="up_${linkName}"/>
             <child link="down_${linkName}"/>
-            <limit effort="3000.0" lower="0.0" upper="1500.548" velocity="0.1"/>
+            <limit effort="3000.0" lower="0.0" upper="3000.548" velocity="0.2"/>
             <dynamics damping="0.2"/>
         </joint>
         <link name="down_${linkName}">
