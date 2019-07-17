@@ -49,6 +49,3 @@
     type: velocity_controllers/JointVelocityController
     joint: base_to_rightdown
     pid: {p: 100.0, i: 0.01, d: 10.0}
-
-
-

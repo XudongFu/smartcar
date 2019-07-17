@@ -9,6 +9,7 @@ import math
 import time
 
 rospy.init_node("control", anonymous=True)
+br = tf.TransformBroadcaster()
 
 
 class footState:
@@ -16,9 +17,11 @@ class footState:
 
     '''
 
-    def __init__(self, upJointCommandTopic, downJointCommandTopic, maxAngle):
+    def __init__(self, foot, upfoot, downfoot, upJointCommandTopic, downJointCommandTopic, maxAngle):
         self.upJointCommandTopic = upJointCommandTopic
         self.downJointCommandTopic = downJointCommandTopic
+        self.upfoot = upfoot
+        self.downfoot = downfoot
         self.upSend = rospy.Publisher(
             upJointCommandTopic, Float64, queue_size=10)
         self.downSend = rospy.Publisher(
@@ -30,6 +33,8 @@ class footState:
         self.downFootAngle = 0.0
         self.direction = 0.0
         self.readState()
+        self.foot = foot
+        self.isRviz = False
         pass
 
     def readState(self):
@@ -38,8 +43,8 @@ class footState:
     def sendDirectionCommand(self, direction):
         if(direction <= math.pi/2 - self.maxAngle):
             raise Exception("over max angle")
-        if( direction>math.pi*3/2 ):
-            direction=direction-math.pi*3/2 
+        if(direction > math.pi*3/2):
+            direction = direction-math.pi*3/2
         directionLength = self.height/math.sin(direction)
         upFootAngle = math.pi - direction - \
             math.acos(directionLength/(2*self.singleFootLength))
@@ -49,11 +54,8 @@ class footState:
             upFootAngle = upFootAngle-math.pi/2
         downFootAngle = math.pi-2 * \
             math.asin(directionLength/(2*self.singleFootLength))
-        command = Float64()
-        command.data = upFootAngle
-        self.upSend.publish(command)
-        command.data = downFootAngle
-        self.downSend.publish(command)
+        self.sendUpAngle(upFootAngle)
+        self.sendDownAngle(downFootAngle)
         pass
 
     def SendStepDirectCommand(self, direction, height):
@@ -64,25 +66,52 @@ class footState:
             upFootAngle = upFootAngle+1.5*math.pi
         else:
             upFootAngle = upFootAngle-math.pi/2
-        downFootAngle = math.pi-2 * \
-            math.asin(directionLength/(2*self.singleFootLength))
-        command = Float64()
-        command.data = upFootAngle
-        self.upSend.publish(command)
-        command.data = downFootAngle
-        self.downSend.publish(command)
-
+        downFootAngle = math.pi-2 * math.asin(directionLength/(2*self.singleFootLength))
+        self.sendUpAngle(upFootAngle)
+        self.sendDownAngle(downFootAngle)
         pass
 
     def sendUpAngle(self, angle):
-        command = Float64()
-        command.data = angle
-        self.upSend.publish(command)
+        if(self.isRviz):
+            if(self.foot.startswith("left")):
+                x = 0
+            else:
+                x = 1.2
+            if(self.foot.endswith("up")):
+                y = 2
+            else:
+                y = 0
+            z = 1.5
+            roll =angle
+            pitch = 0
+            yaw = 0
+            br.sendTransform((x, y, z),
+                             tf.transformations.quaternion_from_euler(
+                                 roll, pitch, yaw),
+                             rospy.Time.now(), self.upfoot, "body",)
+            pass
+        else:
+            command = Float64()
+            command.data = angle
+            self.upSend.publish(command)
 
     def sendDownAngle(self, angle):
-        command = Float64()
-        command.data = angle
-        self.downSend.publish(command)
+        if(self.isRviz):
+            x = 0
+            y = 0
+            z = -0.7
+            roll = angle
+            pitch = 0
+            yaw = 0
+            br.sendTransform((x, y, z),
+                             tf.transformations.quaternion_from_euler(
+                                 roll, pitch, yaw),
+                             rospy.Time.now(), self.downfoot, self.upfoot)
+            pass
+        else:
+            command = Float64()
+            command.data = angle
+            self.downSend.publish(command)
 
     def getDirection(self):
         pass
@@ -95,18 +124,18 @@ class fourFootControl:
 
     def __init__(self):
         self.footLength = 0.0
-        self.foots = ["upleft", "downleft", "upright", "downright"]
+        self.foots = ["leftup", "leftdown", "rightup", "rightdown"]
         self.footdic = {}
         self.footlocation = {}
         temp = 1
         for foot in self.foots:
-            footst = footState(self.getTopic(
+            footst = footState(foot, "up_"+foot, "down_"+foot, self.getTopic(
                 temp), self.getTopic(temp+4), math.pi/6)
             self.footdic[foot] = footst
             temp = temp+1
         self.resetlocation()
         self.lastlocation = {}
-        self.height = self.footdic["upleft"].height
+        self.height = self.footdic["leftup"].height
         self.stepAngle = math.pi/6
         pass
 
@@ -117,7 +146,7 @@ class fourFootControl:
 
     def resetlocation(self):
         for foot in self.foots:
-            if(foot.startswith("up")):
+            if(foot.endswith("up")):
                 self.footlocation[foot] = 0.0
             else:
                 self.footlocation[foot] = 0.0
@@ -153,7 +182,7 @@ class fourFootControl:
                     (self.lastlocation[foot]-math.pi*3/2)
             ambitionHeight = self.height/math.sin(ambitionAngle)*heightpercent
             self.sendStepCommand(foot, ambitionAngle, ambitionHeight)
-            self.footlocation[foot] = math.pi/2- ambitionAngle
+            self.footlocation[foot] = math.pi/2 - ambitionAngle
             for otherfoot in self.foots:
                 if(foot != otherfoot):
                     cAngle = self.getCalculableAngle(
@@ -163,9 +192,10 @@ class fourFootControl:
                     self.sendCommand(otherfoot, math.pi-cAngle)
                     self.footlocation[otherfoot] = readlAngle
             count = count+1
-            self.debugInfo={}
+            self.debugInfo = {}
             for foottemp in self.foots:
-                self.debugInfo[foottemp]=self.footlocation[foottemp]/(math.pi/180)
+                self.debugInfo[foottemp] = self.footlocation[foottemp] / \
+                    (math.pi/180)
             rate.sleep()
         pass
 
@@ -193,6 +223,7 @@ class fourFootControl:
     def getTopic(self, num):
         return "joint"+str(num)+"_position_controller/command"
 
+
 '''
 if __name__ == "__main__":
     control = fourFootControl()
@@ -207,7 +238,8 @@ if __name__ == "__main__":
     control = fourFootControl()
     chang = True
     control.stand()
+    time.sleep(2)
     while(True):
-        for foot in ["upleft","downleft", "upright", "downright"]:
-            control.stepForward(foot, (math.pi/180)*25, 750, 750)
+        for foot in ["leftup", "leftdown", "rightup", "rightdown"]:
+            control.stepForward(foot, (math.pi/180)*20, 1500, 150)
     pass

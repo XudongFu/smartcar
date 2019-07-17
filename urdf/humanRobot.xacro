@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<robot name="humanRobot"
+    xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+    xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="boxShape" params="xyz rpy size" >
+        <visual>
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <geometry>
+                <box size="${size}" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <geometry>
+                <box size="${size}" />
+            </geometry>
+        </collision>
+    </xacro:macro>
+
+    <xacro:macro name="cylinderShape" params="xyz rpy length radius" >
+        <visual>
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <geometry>
+                <cylinder length="${length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <geometry>
+                <cylinder length="${length}" radius="${radius}"/>
+            </geometry>
+        </collision>
+    </xacro:macro>
+    <xacro:macro name="massV" params="massValue" >
+        <inertial>
+            <mass value="${massValue}"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+        </inertial>
+    </xacro:macro>
+    <link name="head">
+        <xacro:boxShape  xyz="0 0 0" rpy="0 0 0" size ="0.7 0.4 0.7" />
+        <xacro:massV  massValue="0.5" />
+    </link>
+    <joint name="head_neck" type="fixed">
+        <origin xyz="0 0 -0.475" rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <parent link="head"/>
+        <child link="neck"/>
+    </joint>
+    <link name="neck">
+        <xacro:cylinderShape  xyz="0 0 0" rpy="0 0 0" length ="0.25"  radius ="0.25"/>
+        <xacro:massV  massValue="0.2" />
+    </link>
+    <joint name="neck_body" type="fixed">
+        <origin xyz="0 0 -0.925" rpy="0 0 0" />
+        <axis xyz="0 0 0" />
+        <parent link="neck"/>
+        <child link="body"/>
+    </joint>
+    <link name="body">
+        <xacro:boxShape  xyz="0 0 0" rpy="0 0 0" size ="1.2 0.4 1.6" />
+        <xacro:massV  massValue="5" />
+    </link>
+
+
+    <xacro:macro name="arm" params="name xyz" >
+        <joint name="${name}" type="continuous">
+            <origin xyz="${xyz}" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="body"/>
+            <child link="${name}_up_arm"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_up_arm">
+            <xacro:boxShape  xyz="0 0 -0.3" rpy="0 0 0" size ="0.25 0.4 0.6" />
+            <xacro:massV  massValue="1" />
+        </link>
+        <joint name="${name}_joint_up" type="continuous">
+            <origin xyz="0 0 -0.6" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="${name}_up_arm"/>
+            <child link="${name}_down_arm"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_down_arm">
+            <xacro:boxShape  xyz="0 0 -0.3" rpy="0 0 0" size ="0.25 0.4 0.6" />
+            <xacro:massV  massValue="1" />
+        </link>
+        <joint name="${name}_joint_down" type="continuous">
+            <origin xyz="0 0 -0.6" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="${name}_down_arm"/>
+            <child link="${name}_hand"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_hand">
+            <xacro:boxShape  xyz="0 0 -0.1" rpy="0 0 0" size ="0.35 0.45 0.2" />
+            <xacro:massV  massValue="0.4" />
+        </link>
+    </xacro:macro>
+    <xacro:arm name="leftArm" xyz="-0.75 0 0.8" />
+    <xacro:arm name="rightArm" xyz="0.75 0 0.8" />
+
+    <xacro:macro name="leg" params="name xyz" >
+        <joint name="${name}" type="continuous">
+            <origin xyz="${xyz}" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="body"/>
+            <child link="${name}_up_leg"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_up_leg">
+            <xacro:boxShape  xyz="0 0 -0.4" rpy="0 0 0" size ="0.3 0.4 0.8" />
+            <xacro:massV  massValue="2" />
+        </link>
+        <joint name="${name}_joint_up" type="continuous">
+            <origin xyz="0 0 -0.8" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="${name}_up_leg"/>
+            <child link="${name}_down_leg"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_down_leg">
+            <xacro:boxShape  xyz="0 0 -0.4" rpy="0 0 0" size ="0.3 0.4 0.8" />
+            <xacro:massV  massValue="2" />
+        </link>
+        <joint name="${name}_joint_down" type="continuous">
+            <origin xyz="0 0 -0.8" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <parent link="${name}_down_leg"/>
+            <child link="${name}_foot"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.0" velocity="0.5"/>
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="${name}_foot">
+            <xacro:boxShape  xyz="0 0 -0.15" rpy="0 0 0" size ="0.4 0.6 0.3" />
+            <xacro:massV  massValue="0.6" />
+        </link>
+    </xacro:macro>
+
+
+    <xacro:leg name="leftLeg" xyz="-0.45 0 -0.8" />
+    <xacro:leg name="rightLeg" xyz="0.45 0 -0.8" />
+</robot>

@@ -23,7 +23,7 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="2.0"/>
+            <mass value="6.0"/>
             <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
@@ -33,7 +33,7 @@
             <axis xyz="0 1 0" />
             <parent link="body"/>
             <child link="up_${linkName}"/>
-            <limit effort="3000.0" lower="0.0" upper="3000.548" velocity="0.2"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.548" velocity="0.7"/>
             <dynamics damping="0.2"/>
         </joint>
         <link name="up_${linkName}">
@@ -62,7 +62,7 @@
             <axis xyz="0 1 0" />
             <parent link="up_${linkName}"/>
             <child link="down_${linkName}"/>
-            <limit effort="3000.0" lower="0.0" upper="3000.548" velocity="0.2"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.548" velocity="0.7"/>
             <dynamics damping="0.2"/>
         </joint>
         <link name="down_${linkName}">
@@ -82,7 +82,7 @@
                 </geometry>
             </collision>
             <inertial>
-                <mass value="1.0"/>
+                <mass value="2.0"/>
                 <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
             </inertial>
         </link>
@@ -95,20 +95,20 @@
         <transmission name="tran${linkName}">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="base_to_${linkName}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
             </joint>
             <actuator name="joint_${linkName}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
         <transmission name="tran${linkName}">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="joint_${linkName}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
             </joint>
             <actuator name="motor_joint_${linkName}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
