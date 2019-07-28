@@ -11,13 +11,13 @@
     </joint>-->
     <link name="body">
         <visual>
-            <origin xyz="0.5 1 1.6" rpy="0 0 0" />
+            <origin xyz="0 0 1.6" rpy="0 0 0" />
             <geometry>
                 <box size="1.2  2  0.2" />
             </geometry>
         </visual>
         <collision name="front_omnileg">
-            <origin xyz="0.5 1 1.6" rpy="0 0 0" />
+            <origin xyz="0 0 1.6" rpy="0 0 0" />
             <geometry>
                 <box size="1.2  2  0.2" />
             </geometry>
@@ -113,10 +113,10 @@
             </actuator>
         </transmission>
     </xacro:macro>
-    <xacro:leg linkName="leftup" xyz="0 2 1.5" rpy ="0 0 1.57"/>
-    <xacro:leg linkName="leftdown" xyz="0 0 1.5" rpy ="0 0 1.57"/>
-    <xacro:leg linkName="rightup" xyz="1 2 1.5" rpy ="0 0 1.57"/>
-    <xacro:leg linkName="rightdown" xyz="1 0 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="leftup" xyz="-0.5 1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="leftdown" xyz="-0.5 -1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="rightup" xyz="0.5 1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="rightdown" xyz="0.5 -1 1.5" rpy ="0 0 1.57"/>
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>

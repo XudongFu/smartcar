@@ -41,6 +41,13 @@
     <!-- Other tools can request additional information be placed here -->
 
   </export>
+  <depend>angles</depend>
+  <depend>control_msgs</depend>
+  <depend>control_toolbox</depend>
+  <depend>controller_interface</depend>
+  <depend>forward_command_controller</depend>
+  <depend>realtime_tools</depend>
+  <depend>urdf</depend>
 <build_depend>gazebo_plugins</build_depend>
 <build_export_depend>gazebo_plugins</build_export_depend>
 <exec_depend>gazebo_plugins</exec_depend>
