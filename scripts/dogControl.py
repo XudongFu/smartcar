@@ -244,5 +244,5 @@ if __name__ == "__main__":
     time.sleep(2)
     while(True):
         for foot in ["leftup", "leftdown", "rightup", "rightdown"]:
-            control.stepForward(foot, (math.pi/180)*20, 1500, 150)
+            control.stepForward(foot, (math.pi/180)*20, 900, 150)
     pass
