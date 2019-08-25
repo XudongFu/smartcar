@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot name="cartest"
+    xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+    xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+    <!--<link name="world"/><joint name="test" type="fixed"><parent link="world"/><child link="body"/></joint>-->
+    <link name="body">
+        <visual>
+            <origin xyz="0 0 1.6" rpy="0 0 0" />
+            <geometry>
+                <box size="1.2  2  0.2" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 1.6" rpy="0 0 0" />
+            <geometry>
+                <box size="1.2  2  0.2" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="8.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+        </inertial>
+    </link>
+    <xacro:macro name="leg" params="linkName xyz rpy">
+       <joint name="base_to_${linkName}" type="continuous">
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <axis xyz="0 1 0" />
+            <parent link="body"/>
+            <child link="up_${linkName}"/>
+            <calibration rising="0.0"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.548" velocity="0.7"/>
+            <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-2.0" soft_upper_limit="0.5" />
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="up_${linkName}">
+            <visual>
+                <origin xyz="0 0 -0.35" rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.05"/>
+                </geometry>
+                <material name = "white">
+                    <color rgba = "0 0 1 1"/>
+                </material>
+            </visual>
+            <collision name="collision_${linkName}">
+                <origin xyz="0 0 -0.35" rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.05"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.4"/>
+                <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            </inertial>
+        </link>
+        <joint name="joint_${linkName}" type="continuous">
+            <origin xyz="0 0 -0.7" rpy="0 0 0" />
+            <parent link="up_${linkName}"/>
+            <child link="down_${linkName}"/>
+            <calibration rising="0.0"/>
+            <limit effort="2000.0" lower="0.0" upper="2000.548" velocity="0.7"/>
+            <safety_controller k_velocity="10" k_position="15" soft_lower_limit="-2.0" soft_upper_limit="0.5" />
+            <dynamics damping="0.2"/>
+        </joint>
+        <link name="down_${linkName}">
+            <visual>
+                <origin xyz="0 0 -0.35" rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.05"/>
+                </geometry>
+                <material name = "white">
+                    <color rgba = "0 0 1 1"/>
+                </material>
+            </visual>
+            <collision name="collision_${linkName}">
+                <origin xyz="0 0 -0.35" rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.7" radius="0.05"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.4"/>
+                <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            </inertial>
+        </link>
+        <gazebo reference="up_${linkName}">
+            <material>Gazebo/blue</material>
+        </gazebo>
+        <gazebo reference="down_${linkName}">
+            <material>Gazebo/blue</material>
+        </gazebo>
+        <transmission name="tran${linkName}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="base_to_${linkName}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="joint_${linkName}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="tran${linkName}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="joint_${linkName}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="motor_joint_${linkName}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+    <xacro:leg linkName="leftup" xyz="-0.5 1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="leftdown" xyz="-0.5 -1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="rightup" xyz="0.5 1 1.5" rpy ="0 0 1.57"/>
+    <xacro:leg linkName="rightdown" xyz="0.5 -1 1.5" rpy ="0 0 1.57"/>
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+    </gazebo>
+</robot>

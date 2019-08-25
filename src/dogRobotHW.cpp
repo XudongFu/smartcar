@@ -18,7 +18,7 @@ void dogRobotHW::write(const ros::Time& time, const ros::Duration& period)
 
 bool dogRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
 {
-
+    
     return true;
 }
 

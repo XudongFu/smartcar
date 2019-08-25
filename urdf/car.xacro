@@ -114,6 +114,12 @@
                 <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
             </inertial>
         </link>
+        <gazebo reference="${linkName}">
+            <mu>10</mu>
+            <mu2>10</mu2>
+            <kp>100000000.0</kp>
+            <kd>10000.0</kd>
+        </gazebo>
         <!-- <transmission name="tran${linkName}"><type>transmission_interface/SimpleTransmission</type><joint name="base_to_${linkName}"><hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface></joint><actuator name="motor_${linkName}"><hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface><mechanicalReduction>1</mechanicalReduction></actuator></transmission> -->
         <gazebo reference="${linkName}">
             <material>Gazebo/Orange</material>

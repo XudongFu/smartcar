@@ -39,7 +39,7 @@ def pubOdom():
     rate = rospy.Rate(10)
     roll=0 
     pitch=0
-    yaw=0.1
+    yaw=0
     while  not rospy.is_shutdown():
         req = GetModelStateRequest()
         req.model_name="robot"
@@ -56,8 +56,10 @@ def pubOdom():
         # t.transform.translation.y = rps.pose.position.y
         # t.transform.translation.z = rps.pose.position.z
         # m.sendTransformMessage((),)
+        qu=[rps.pose.orientation.x,rps.pose.orientation.y,rps.pose.orientation.z,rps.pose.orientation.w]
+        tf.transformations.euler_from_quaternion
         m.sendTransform((rps.pose.position.x,rps.pose.position.y,rps.pose.position.z),  
-                     tf.transformations.quaternion_from_euler(roll,pitch,yaw),  
+                     qu,  
                      rospy.Time.now(),  
                      "base_footprint",  
                      "odom")

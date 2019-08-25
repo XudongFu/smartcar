@@ -7,9 +7,19 @@ import math
 import tf
 import math
 import time
+import socket
 
 rospy.init_node("control", anonymous=True)
 br = tf.TransformBroadcaster()
+sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sk.bind(("192.168.199.243",1234))
+sk.listen(5)
+client,port = sk.accept()
+footIndexDic={}
+footIndexDic["leftup"]=0
+footIndexDic["leftdown"]=1
+footIndexDic["rightup"]=2
+footIndexDic["rightdown"]=3
 
 
 class footState:
@@ -94,6 +104,12 @@ class footState:
             command = Float64()
             command.data = angle
             self.upSend.publish(command)
+            temp = 360- int(math.degrees(angle))
+            if(temp>75):
+                temp=75
+            if(False):
+                pass
+                #client.send(footIndexDic[self.foot]+","+temp)
 
     def sendDownAngle(self, angle):
         if(self.isRviz):
@@ -111,7 +127,13 @@ class footState:
         else:
             command = Float64()
             command.data = angle
-            self.downSend.publish(command)
+            temp= int( math.degrees(angle))
+            if(temp>75):
+                temp=75
+            footTemp=footIndexDic[self.foot]+4
+            #client.send(footTemp+","+temp)
+            if(False):
+                self.downSend.publish(command)
 
     def getDirection(self):
         pass
