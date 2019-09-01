@@ -1,3 +1,4 @@
 from PIL import Image
 from pylab import *
-Image.
+from rosdep2.main import rosdep_main
+rosdep_main()

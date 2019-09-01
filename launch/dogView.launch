@@ -1,9 +1,9 @@
 <launch>
 <param name="use_gui" value="true"/>
     <param name="robot_description" command="$(find xacro)/xacro.py $(find smartcar)/urdf/dog.xacro" />
-    <node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/config.rviz" />
+    <!-- <node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/config.rviz" />
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
-    <node pkg="joint_state_publisher" type="joint_state_publisher" name="dut_joint_state_publisher" />
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="dut_joint_state_publisher" /> -->
     <!---->
 </launch>
 

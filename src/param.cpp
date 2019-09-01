@@ -5,6 +5,7 @@ using namespace ros;
 
 int main(int argc, char *argv[])
 {
+
     int x;
     cin>>x;
     ros::init(argc, argv, "param");
@@ -14,7 +15,6 @@ int main(int argc, char *argv[])
         cout<<*argv[i]<<endl;
         ROS_INFO("args is %s",argv[i]);
     }
-    
     cin>>x;
     return 0;
 }

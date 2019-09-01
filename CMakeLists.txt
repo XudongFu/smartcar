@@ -3,7 +3,7 @@ project(smartcar)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-
+SET(CMAKE_BUILD_TYPE Debug)
 find_package(catkin REQUIRED COMPONENTS
   gazebo_plugins 
   roscpp
@@ -13,6 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   controller_interface
   forward_command_controller
   realtime_tools
+  controller_manager
+  hardware_interface 
+  transmission_interface
   urdf
 )
 
@@ -25,6 +28,9 @@ catkin_package(
     controller_interface
     forward_command_controller
     realtime_tools
+    controller_manager
+    hardware_interface 
+    transmission_interface
     urdf
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
@@ -32,22 +38,7 @@ catkin_package(
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME}
-  src/joint_position_controller.cpp
-)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-
-# Install
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-
-# Install library
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -154,11 +145,7 @@ message("catkin_INCLUDE_DIRS-------->" ${catkin_INCLUDE_DIRS})
 # add_executable(${PROJECT_NAME}_node src/smartcar_node.cpp)
 
 add_executable(paramtest src/param.cpp)
-add_executable(dogHW src/dogRobotHW.cpp)
-
-target_link_libraries(dogHW
-  ${catkin_LIBRARIES}
-)
+add_executable(robot src/dogRobotHW.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -166,14 +153,16 @@ target_link_libraries(dogHW
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
-## same as for the library above
+## same as for the library above 
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(paramtest
   ${catkin_LIBRARIES}
 )
-
+target_link_libraries(robot
+  ${catkin_LIBRARIES}
+)
 #############
 ## Install ##
 #############
@@ -208,7 +197,16 @@ target_link_libraries(paramtest
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+# Install
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
+# Install library
+install(TARGETS paramtest robot
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
 #############
 ## Testing ##
 #############
