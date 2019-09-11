@@ -26,8 +26,6 @@
   <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" />
   </node> 
-
-  
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find smartcar)/config/dogcontrol.yaml" command="load"/>
 

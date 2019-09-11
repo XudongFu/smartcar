@@ -44,18 +44,9 @@ def pubOdom():
         req = GetModelStateRequest()
         req.model_name="robot"
         req.relative_entity_name="ground_plane"
-        #rps=GetModelStateResponse()
         rps= client.call(req)
         pose = rps.pose
         m=tf.TransformBroadcaster()
-        # t = geometry_msgs.msg.TransformStamped()
-        # t.header.frame_id = 'odom'
-        # t.header.stamp = rospy.Time.now()
-        # t.child_frame_id = 'base_footprint'
-        # t.transform.translation.x = rps.pose.position.x
-        # t.transform.translation.y = rps.pose.position.y
-        # t.transform.translation.z = rps.pose.position.z
-        # m.sendTransformMessage((),)
         qu=[rps.pose.orientation.x,rps.pose.orientation.y,rps.pose.orientation.z,rps.pose.orientation.w]
         tf.transformations.euler_from_quaternion
         m.sendTransform((rps.pose.position.x,rps.pose.position.y,rps.pose.position.z),  
@@ -68,7 +59,7 @@ def pubOdom():
     
 if __name__ == "__main__":
     threa=threading.Thread(target=pubOdom)
-    threa.start()
+    #threa.start()
     while(True):
         xx= raw_input()         
         if(xx=="a"):# left
