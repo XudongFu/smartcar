@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find smartcar)/launch/car-gazebo.launch">
+  </include>
+  <include file="$(find smartcar)/launch/cartographer.launch">
+  </include>
+<node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/cartographertest.rviz" />
+</launch>

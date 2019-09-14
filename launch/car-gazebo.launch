@@ -27,7 +27,7 @@
     <param name="publish_frequency" type="double" value="30.0" />
   </node> 
 
-  
+  <node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/cartographertest.rviz" />
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find smartcar)/config/robotcontrol.yaml" command="load"/>
 

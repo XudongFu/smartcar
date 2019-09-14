@@ -65,12 +65,12 @@ if __name__ == "__main__":
         if(xx=="a"):# left
             if(curspeed == 0):
                 curspeed=0.5
-            send(curspeed/2,curspeed/2,curspeed,curspeed)
+            send(0,0,curspeed,curspeed)
         if(xx=="d"):
-            send(curspeed,curspeed,curspeed/2,curspeed/2)
+            send(curspeed*4,curspeed,curspeed*-1,curspeed*-1)
         if(xx=="w"):# up
             curspeed=curspeed+0.15
-            send(curspeed,curspeed,curspeed/2,curspeed/2)
+            send(curspeed,curspeed,curspeed,curspeed)
         if(xx=="s" ):
             if(curspeed-0.15>0):
                 curspeed=curspeed-0.15
