@@ -13,9 +13,7 @@ pub = rospy.Publisher("scan",LaserScan,queue_size=10)
 
 def callBack(scan):
     res=scan
-    print("before"+ str(res.header.stamp))
-    res.header.stamp=rospy.Time.now()
-    print("after "+str(res.header.stamp))
+    res.time_increment=0.000001
     pub.publish(res)
     pass
 
