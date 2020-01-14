@@ -4,5 +4,5 @@
   </include>
   <include file="$(find smartcar)/launch/cartographer.launch">
   </include>
-<node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/cartographertest.rviz" />
+<!-- <node pkg="rviz" type="rviz" name="rviz"  args="$(find smartcar)/config/cartographertest.rviz" /> -->
 </launch>
