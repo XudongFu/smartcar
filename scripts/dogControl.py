@@ -11,10 +11,10 @@ import socket
 
 rospy.init_node("control", anonymous=True)
 br = tf.TransformBroadcaster()
-sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sk.bind(("192.168.199.243",1234))
-sk.listen(5)
-client,port = sk.accept()
+# sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# sk.bind(("127.0.0.1",1234))
+# sk.listen(5)
+# client,port = sk.accept()
 footIndexDic={}
 footIndexDic["leftup"]=0
 footIndexDic["leftdown"]=1
@@ -132,7 +132,7 @@ class footState:
                 temp=75
             footTemp=footIndexDic[self.foot]+4
             #client.send(footTemp+","+temp)
-            if(False):
+            if(True):
                 self.downSend.publish(command)
 
     def getDirection(self):
@@ -246,16 +246,15 @@ class fourFootControl:
         return "joint"+str(num)+"_position_controller/command"
 
 
-'''
-if __name__ == "__main__":
-    control = fourFootControl()
-    chang = True
-    while(True):
-        control.stand()
-        time.sleep(4)
-    pass
 
-'''
+# if __name__ == "__main__":
+#     control = fourFootControl()
+#     chang = True
+#     while(True):
+#         control.stand()
+#         time.sleep(4)
+#     pass
+
 
 
 

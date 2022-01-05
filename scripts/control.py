@@ -37,10 +37,8 @@ def send(data_leftup,data_leftdown,data_rightup,data_rightdown):
 def pubOdom():
     rospy.wait_for_service("/gazebo/get_model_state")
     client = rospy.ServiceProxy("/gazebo/get_model_state",GetModelState)
-    rate = rospy.Rate(10)
-    roll=0 
-    pitch=0
-    yaw=0
+    rate = rospy.Rate(25)
+
     while  not rospy.is_shutdown():
         req = GetModelStateRequest()
         req.model_name="robot"
@@ -51,54 +49,16 @@ def pubOdom():
         qu=[rps.pose.orientation.x,rps.pose.orientation.y,rps.pose.orientation.z,rps.pose.orientation.w]
         tf.transformations.euler_from_quaternion
         m.sendTransform((rps.pose.position.x,rps.pose.position.y,rps.pose.position.z),  
-                     qu,  
-                     rospy.Time.now(),  
+                     qu,rospy.Time.now(),  
                      "base_footprint",  
                      "odom")
         rate.sleep()
-        pass
-
-def pubOdometry():
-    rospy.wait_for_service("/gazebo/get_model_state")
-    client = rospy.ServiceProxy("/gazebo/get_model_state",GetModelState)
-    rate = rospy.Rate(10)
-    publicOdometry = rospy.Publisher("odom",Odometry,queue_size=10)
-    while  not rospy.is_shutdown():
-        req = GetModelStateRequest()
-        req.model_name="robot"
-        req.relative_entity_name="ground_plane"
-        rps= client.call(req)
-        pose = rps.pose
-        info=Odometry()
-        info.header.stamp=rospy.Time.now()
-        info.header.frame_id="odom"
-        info.child_frame_id="base_footprint"
-        info.pose.pose=rps.pose
-        info.twist.twist=rps.twist
-        publicOdometry.publish(info)
-    pass
-
-
-def callBack(scan):
-    res=scan
-    res.time_increment=0.000001
-    pub.publish(res)
-    pass
-
-def pubchange():
-    rospy.Subscriber("test",LaserScan,callBack)
-    rospy.spin()
-    pass
-
-
 
 if __name__ == "__main__":
     threa=threading.Thread(target=pubOdom)
-    #threa.start()
-    change=threading.Thread(target=pubchange)
-    change.start()
-    # pubOde=threading.Thread(target=pubOdometry)
-    # pubOde.start()
+    threa.start()
+    # change=threading.Thread(target=pubchange)
+    # change.start()
     while(True):
         xx= raw_input()         
         if(xx=="a"):# left
@@ -115,5 +75,6 @@ if __name__ == "__main__":
                 curspeed=curspeed-0.15
             else:
                 curspeed=0.0
-            send(curspeed,curspeed,curspeed,curspeed)            
+            send(curspeed,curspeed,curspeed,curspeed)        
+        print "speed:"+ str(curspeed)  
     pass
